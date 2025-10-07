@@ -6,15 +6,16 @@ require_once __DIR__ . '/functions/weather.php';
 
 $config = include __DIR__ . '/config/config.php';
 
+// Sjekk om bruker har sendt melding
 if (!isset($_POST['message']) || empty(trim($_POST['message']))) {
-    echo json_encode(['reply' => 'Please type something! 😅']);
+    echo json_encode(['reply' => 'Please type something!']);
     exit;
 }
 
 $userMessage = trim($_POST['message']);
-$reply = "Hmm, I couldn't find the weather for that location. 🤔";
+$reply = "Hmm, I couldn't find the weather for that location.";
 
-// 🧭 Check if lat/lon sent from JS (user clicked "Use my location")
+// Hvis bruker sender lat/lon fra "Bruk min lokasjon"
 if (isset($_POST['lat']) && isset($_POST['lon'])) {
     $lat = $_POST['lat'];
     $lon = $_POST['lon'];
@@ -28,6 +29,7 @@ if (isset($_POST['lat']) && isset($_POST['lon'])) {
         $advice = getClothingAdvice($temp, $weatherCode, $windSpeed);
         $weatherInfo = getWeatherEmoji($weatherCode, $windSpeed);
 
+        // Bygg værkort
         $reply = "
         <div class='weather-card'>
           <div class='weather-emoji'>{$weatherInfo['emoji']}</div>
@@ -44,19 +46,17 @@ if (isset($_POST['lat']) && isset($_POST['lon'])) {
     exit;
 }
 
-// ------------------------------
-// Clean up message and extract city name (English + Norwegian)
-// ------------------------------
+// Rydd opp i meldingen og hent bynavn
 $messageClean = strtolower($userMessage);
 $patterns = [
-    // English
+    // Engelsk
     '/what about\s+/i',
     '/how(\'s| is) the weather in\s+/i',
     '/do i need.* in\s+/i',
     '/weather in\s+/i',
     '/what should i wear today in\s+/i',
     '/what should i wear in\s+/i',
-    // Norwegian
+    // Norsk
     '/hvordan er været i\s+/i',
     '/hva er temperaturen i\s+/i',
     '/trenger jeg.* i\s+/i',
@@ -72,13 +72,11 @@ if (empty($cityName)) {
     $cityName = $config['default_city'];
 }
 
-// Remove punctuation (fix for “Lillesand?” or “Bergen!”)
+// Fjern skilletegn
 $cityName = preg_replace('/[?.!,]/', '', $cityName);
 $cityName = trim($cityName);
 
-// ------------------------------
-// Get city coordinates using Open-Meteo Geocoding API
-// ------------------------------
+// Hent bykoordinater fra Open-Meteo Geocoding API
 $geoApiUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' . urlencode($cityName) . '&count=1';
 
 $ch = curl_init();
@@ -95,9 +93,7 @@ if ($geoResponse) {
         $lon = $geoData['results'][0]['longitude'];
         $resolvedCity = $geoData['results'][0]['name'];
 
-        // ------------------------------
-        //  Get weather data
-        // ------------------------------
+        // Hent værdata
         $weatherData = getWeather($lat, $lon);
 
         if ($weatherData) {
@@ -108,7 +104,7 @@ if ($geoResponse) {
             $advice = getClothingAdvice($temp);
             $weatherInfo = getWeatherEmoji($weatherCode, $windSpeed);
 
-            // Build fun and friendly replyy
+            // Bygg svarmelding
             $emoji = $weatherInfo['emoji'] ?? '🌤️';
             $desc  = $weatherInfo['text'] ?? '';
 
@@ -129,5 +125,5 @@ if ($geoResponse) {
     $reply = "Uh oh... Something went wrong while checking the weather. 🌩️";
 }
 
-// Send the chatbot reply as JSON
+// Send svar som JSON
 echo json_encode(['reply' => $reply]);

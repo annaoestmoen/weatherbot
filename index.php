@@ -8,12 +8,18 @@
 <body>
     <div id="chatbox">
         <h2>Weatherbot</h2>
+
+        <!-- Meldingsvindu -->
         <div id="messages"></div>
+
+        <!-- Tekstfelt for brukerinput -->
         <input type="text" id="inputBox" placeholder="Ask about the weather in any city!" />
+
+        <!-- Send-knapp -->
         <button id="sendBtn">Send</button>
     </div>
 
-    <!-- Link to external JS file -->
+    <!-- Link til JavaScript -->
     <script src="assets/js/chat.js"></script>
 </body>
 </html>

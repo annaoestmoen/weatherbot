@@ -1,9 +1,16 @@
+/*!
+ * Weatherbot Chat CSS
+ * Beskrivelse: Stiler for Weatherbot chatgrensesnitt
+ */
+
+/* Global stil */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
 }
 
+/* Chatboks */
 #chatbox {
     width: 100%;
     max-width: 600px;
@@ -13,27 +20,16 @@ body {
     border-radius: 10px;
 }
 
+/* Meldinger */
 .message {
     margin: 10px 0;
     padding: 8px 12px;
     border-radius: 5px;
 }
 
-.user {
-    background-color: #d0e7ff;
-    text-align: right;
-}
+.user { background-color: #d0e7ff; text-align: right; }
+.bot { background-color: #d4ffd4; text-align: left; }
 
-.bot {
-    background-color: #d4ffd4;
-    text-align: left;
-}
-
-#inputBox {
-    width: calc(100% - 100px);
-    padding: 10px;
-}
-
-#sendBtn {
-    padding: 10px;
-}
+/* Input og knapper */
+#inputBox { width: calc(100% - 100px); padding: 10px; }
+#sendBtn { padding: 10px; }
