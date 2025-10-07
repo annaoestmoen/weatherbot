@@ -1,8 +1,14 @@
 <?php
-// General configuration
+/**
+ * Konfigurasjonsfil for Weatherbot
+ * 
+ * Inneholder standardverdier og API-endepunkter.
+ */
 
 return [
-    'default_city' => 'oslo',
+    // Base-URL til Open-Meteo API for værdata
     'weather_api_base' => 'https://api.open-meteo.com/v1/forecast',
-    'default_temperature_unit' => 'C', // °C
+
+    // Standard temperatur-enhet (°C)
+    'default_temperature_unit' => 'C',
 ];
