@@ -1,7 +1,7 @@
 // Hent elementer fra DOM
-const inputBox = document.getElementById('inputBox'); // Tekstfelt for brukerinput
-const sendBtn = document.getElementById('sendBtn'); // Send-knapp
-const messages = document.getElementById('messages'); // Container for meldinger
+const inputBox = document.getElementById('inputBox'); // Tekstfelt
+const sendBtn = document.getElementById('sendBtn');   // Send-knapp
+const messages = document.getElementById('messages'); // Meldingsvindu
 
 /**
  * Legg til melding i chatten
@@ -13,36 +13,74 @@ function appendMessage(sender, text) {
     div.classList.add('message', sender);
     div.innerHTML = text;
     messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight; // Scroll ned til siste melding
+    messages.scrollTop = messages.scrollHeight; // scroll til siste melding
 }
 
 /**
- * Send brukerens melding til PHP og vis svar
+ * Send melding til PHP og vis bot-svar
+ * @param {string} message
+ * @param {number} lat - valgfritt, geografisk breddegrad
+ * @param {number} lon - valgfritt, geografisk lengdegrad
  */
-async function sendMessage() {
-    const message = inputBox.value.trim();
-    if (!message) return; // Ingen melding, gjør ingenting
+async function sendMessage(message = null, lat = null, lon = null) {
+    const msg = message || inputBox.value.trim();
+    if (!msg) return;
 
-    appendMessage('user', message); // Vis brukerens melding
-    inputBox.value = ''; // Tøm tekstfelt
+    if (!message) inputBox.value = ''; // tøm tekstfelt hvis bruker skrev selv
+    appendMessage('user', msg);       // vis bruker-melding
 
     try {
-        const response = await fetch('chat.php', {
+        // Bygg POST-data
+        let body = 'message=' + encodeURIComponent(msg);
+        if (lat !== null && lon !== null) {
+            body += `&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+        }
+
+        // Send til chat.php
+        const response = await fetch('user/chat.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'message=' + encodeURIComponent(message) // Send melding
+            body: body
         });
+
         const data = await response.json();
-        appendMessage('bot', data.reply.replace(/\n/g, '<br>')); // Vis bot-svar
+        appendMessage('bot', data.reply.replace(/\n/g, '<br>'));
+
     } catch (err) {
         appendMessage('bot', 'Error connecting to chatbot.');
+        console.error(err);
     }
 }
 
 // Send melding ved klikk på knapp
-sendBtn.addEventListener('click', sendMessage); 
+sendBtn.addEventListener('click', () => sendMessage());
 
 // Send melding ved Enter-tast
 inputBox.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') sendMessage();
 });
+
+/**
+ * Funksjon for å bruke brukerens posisjon (valgfritt)
+ */
+async function sendLocation() {
+    if (!navigator.geolocation) {
+        appendMessage('bot', 'Geolocation is not supported by your browser.');
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            sendMessage('My location', lat, lon);
+        },
+        (err) => {
+            appendMessage('bot', 'Could not get your location.');
+            console.error(err);
+        }
+    );
+}
+
+// Hvis du vil legge til en knapp for "Bruk min posisjon", kan du koble den slik:
+// document.getElementById('locationBtn').addEventListener('click', sendLocation);

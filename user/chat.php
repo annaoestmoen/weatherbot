@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/functions/weather.php';
-require_once __DIR__ . '/functions/chatfunctions.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../functions/weather.php';
+require_once __DIR__ . '/../functions/chatfunctions.php';
 
 $config = include __DIR__ . '/config/config.php';
 

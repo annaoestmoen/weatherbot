@@ -1,33 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Weatherbot</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+<?php
+require_once 'functions/auth.php';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $is_admin = isset($_POST['admin']); // checkbox eller knapp for admin
+
+    $result = login($username, $password, $is_admin);
+
+    if ($result === true) {
+        if ($is_admin) {
+            header('Location: admin/index.php');
+        } else {
+            header('Location: user/index.php');
+        }
+        exit;
+    } else {
+        $error = $result;
+    }
+}
+?>
 <body>
-    <div id="chatbox">
-        <h2>Weatherbot</h2>
+    <h2 style="text-align:center;">Login</h2>
+    <?php if ($error): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
 
-        <!-- Meldingsvindu -->
-        <div id="messages"></div>
+    <form method="post">
+        <label>Brukernavn</label><br>
+        <input type="text" name="username" required><br>
 
-        <!-- Tekstfelt for brukerinput -->
-        <input type="text" id="inputBox" placeholder="Ask about the weather in any city!" />
+        <label>Passord</label><br>
+        <input type="password" name="password" required><br>
 
-        <!-- Send-knapp -->
-        <button id="sendBtn">Send</button>
-    </div>
+        <input type="checkbox" name="admin" id="admin">
+        <label for="admin">Admin login</label><br><br>
 
-    <!-- Admin-login-link -->
-    <p style="text-align:center; margin-top: 10px;">
-      <a href="admin/login.php" style="font-size: 0.9em;">Admin login</a>
-    </p>
-
-    <!-- Link til JavaScript -->
-    <script src="assets/js/chat.js"></script>
+        <button type="submit">Logg inn</button>
+    </form>
 </body>
 </html>
-
-
 
