@@ -1,15 +1,11 @@
 <?php
+require_once __DIR__ . '/../config/db.php'; // sørg for PDO
+
 function logChat($user_message, $bot_response, $is_error = 0) {
-    // Forsøk å laste DB-tilkobling
-    $dbFile = __DIR__ . '/../config/db.php';
-    if (!file_exists($dbFile)) {
-        error_log("logChat: fant ikke DB-konfig: $dbFile");
-        return false;
-    }
-    require $dbFile; // forventer at dette setter $pdo
+    global $pdo; // bruk PDO fra db.php
 
     if (!isset($pdo) || !$pdo instanceof PDO) {
-        error_log("logChat: \$ erpdo ikke satt eller ikke en PDO-instans");
+        error_log("logChat: \$pdo ikke satt eller ikke PDO");
         return false;
     }
 
@@ -25,8 +21,8 @@ function logChat($user_message, $bot_response, $is_error = 0) {
         ]);
         return true;
     } catch (PDOException $e) {
-        // Logg til PHP error_log så du ser feilen i XAMPP logs
         error_log("logChat - PDOException: " . $e->getMessage());
         return false;
     }
 }
+
