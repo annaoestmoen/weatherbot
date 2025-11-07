@@ -1,0 +1,1 @@
+<?php require 'functions/chatfunctions.php'; var_dump(logChat('hei', 'svar', 0));

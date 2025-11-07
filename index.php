@@ -19,6 +19,11 @@
         <button id="sendBtn">Send</button>
     </div>
 
+    <!-- Admin-login-link -->
+    <p style="text-align:center; margin-top: 10px;">
+      <a href="admin/login.php" style="font-size: 0.9em;">Admin login</a>
+    </p>
+
     <!-- Link til JavaScript -->
     <script src="assets/js/chat.js"></script>
 </body>
