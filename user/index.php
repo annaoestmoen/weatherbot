@@ -1,3 +1,15 @@
+<?php
+session_start();
+// Sjekk at bruker er logget inn
+if (empty($_SESSION['user_logged_in'])) {
+    header('Location: ../index.php?error=not_logged_in');
+    exit;
+}
+
+// Hent brukernavn fra session
+$username = $_SESSION['user_username'] ?? 'Ukjent bruker';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +20,8 @@
 <body>
     <div id="chatbox">
         <h2>Weatherbot</h2>
+
+        <h3>Hei <?= htmlspecialchars($username) ?>!</h3>
 
         <!-- Meldingsvindu -->
         <div id="messages"></div>

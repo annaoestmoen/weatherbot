@@ -2,6 +2,19 @@
 require_once 'functions/auth.php';
 $error = '';
 
+// Sjekk om vi har en utloggingsmelding
+$logout_message = '';
+if (isset($_GET['message'])) {
+    switch ($_GET['message']) {
+        case 'logged_out_user':
+            $logout_message = 'Du er nå logget ut som bruker.';
+            break;
+        case 'logged_out_admin':
+            $logout_message = 'Du er nå logget ut som administrator.';
+            break;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -22,9 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <body>
-    <h2 style="text-align:center;">Login</h2>
+    <h2 style="text-align:left;">Login</h2>
     <?php if ($error): ?>
         <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
+
+    <!-- Vis utloggingsmelding hvis satt -->
+    <?php if ($logout_message): ?>
+        <p class="success"><?= htmlspecialchars($logout_message) ?></p>
     <?php endif; ?>
 
     <form method="post">

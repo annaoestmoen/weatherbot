@@ -2,14 +2,16 @@
 session_start();
 require_once '../config/db.php';
 
-// --- Sjekk at admin er logget inn ---
+// Sjekk at admin er logget inn 
 if (empty($_SESSION['admin_logged_in'])) {
     header('Location: ../index.php?error=not_logged_in');
     exit;
 }
+
+// Hent admin-navn fra session
 $adminName = $_SESSION['admin_username'];
 
-// --- Hent feil-logs fra chat_logs ---
+// Hent feil-logs fra chat_logs 
 $stmt = $pdo->query("SELECT * FROM chat_logs WHERE is_error = 1 ORDER BY created_at DESC");
 $logs = $stmt->fetchAll();
 ?>
@@ -22,7 +24,7 @@ $logs = $stmt->fetchAll();
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-<h2>Velkommen, <?= htmlspecialchars($adminName) ?></h2>
+<h2>Hei <?= htmlspecialchars($adminName) ?>!</h2>
 <h3>Feil-chats</h3>
 <table border="1">
 <tr><th>ID</th><th>Brukermelding</th><th>Botsvar</th><th>Tid</th></tr>
