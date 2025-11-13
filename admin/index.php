@@ -24,10 +24,17 @@ $logs = $stmt->fetchAll();
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+
+<!-- Vis navnet på innlogget admin -->
 <h2>Hei <?= htmlspecialchars($adminName) ?>!</h2>
+
 <h3>Feil-chats</h3>
+
+<!-- Tabell med feil-logger fra databasen -->
 <table border="1">
 <tr><th>ID</th><th>Brukermelding</th><th>Botsvar</th><th>Tid</th></tr>
+
+<!-- Loop gjennom logs og vis innhold -->
 <?php foreach ($logs as $log): ?>
 <tr>
     <td><?= htmlspecialchars($log['id']) ?></td>
@@ -37,6 +44,8 @@ $logs = $stmt->fetchAll();
 </tr>
 <?php endforeach; ?>
 </table>
+
+<!-- Link for å logge ut -->
 <a href="logout.php">Logg ut</a>
 </body>
 </html>
