@@ -1,12 +1,13 @@
 <?php
 session_start();
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/db.php'; // Kobler til databasen
 
 function login($username, $password, $is_admin = false) {
     global $pdo;
 
-    $table = $is_admin ? 'admins' : 'users';
+    $table = $is_admin ? 'admins' : 'users'; // Velg tabell basert på brukerrolle
 
+    // Hent bruker fra databasen
     $stmt = $pdo->prepare("SELECT * FROM {$table} WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
@@ -59,6 +60,7 @@ function login($username, $password, $is_admin = false) {
 }
 
 
+// Logg ut funksjon
 function logout($is_admin = false) {
     if ($is_admin) {
         unset($_SESSION['admin_logged_in'], $_SESSION['admin_username'], $_SESSION['admin_id']);
@@ -67,6 +69,7 @@ function logout($is_admin = false) {
     }
 }
 
+// Sjekk om admin er logget inn
 function requireAdmin() {
     if (empty($_SESSION['admin_logged_in'])) {
         header('Location: ../index.php?error=login');
@@ -74,6 +77,7 @@ function requireAdmin() {
     }
 }
 
+// Sjekk om bruker er logget inn
 function requireUser() {
     if (empty($_SESSION['user_logged_in'])) {
         header('Location: ../index.php?error=login');

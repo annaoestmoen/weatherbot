@@ -1,5 +1,5 @@
 <?php
-require_once 'functions/auth.php';
+require_once 'functions/auth.php'; // Henter login-funksjoner
 $error = '';
 
 // Sjekk om vi har en utloggingsmelding
@@ -15,6 +15,7 @@ if (isset($_GET['message'])) {
     }
 }
 
+// Behandle login-skjema
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = login($username, $password, $is_admin);
 
     if ($result === true) {
+        // Videresend til riktig dashboard
         if ($is_admin) {
             header('Location: admin/index.php');
         } else {
@@ -30,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     } else {
-        $error = $result;
+        $error = $result; // Sett feilmelding
     }
 }
 ?>
