@@ -3,6 +3,8 @@ const inputBox = document.getElementById('inputBox'); // Tekstfelt
 const sendBtn = document.getElementById('sendBtn');   // Send-knapp
 const messages = document.getElementById('messages'); // Meldingsvindu
 
+const basePath = '../user/chat.php';
+
 /**
  * Legg til melding i chatten
  * @param {string} sender - 'user' eller 'bot'
@@ -37,7 +39,7 @@ async function sendMessage(message = null, lat = null, lon = null) {
         }
 
         // Send til chat.php
-        const response = await fetch('user/chat.php', {
+        const response = await fetch(basePath, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: body
