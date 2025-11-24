@@ -1,43 +1,35 @@
 <?php
 require_once __DIR__ . '/config/db.php';
+require_once 'functions/validation.php';
 session_start();
 
 $errors = [];
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
-    $password2 = isset($_POST['password2']) ? $_POST['password2'] : '';
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $password2 = $_POST['password2'] ?? '';
 
-    // Validering e-post
-    if ($email === '') {
-        $errors[] = "E-post kan ikke være tom.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Ugyldig e-postadresse.";
-    }
+    // Validering og sanitizing
+    $email = validateEmail($email);
+    if (!$email) $errors[] = "Ugyldig e-postadresse.";
 
-    // Validering passord
-    if ($password === '' || $password2 === '') {
-        $errors[] = "Begge passordfelt må fylles ut.";
-    } elseif ($password !== $password2) {
+    if ($password !== $password2) {
         $errors[] = "Passordene matcher ikke.";
-    } elseif (strlen($password) < 8) {
-        $errors[] = "Passord må være minst 8 tegn (anbefalt).";
+    } else {
+        $password = validatePassword($password);
+        if (!$password) $errors[] = "Passord må være minst 8 tegn.";
     }
 
     // Fortsett hvis OK
     if (empty($errors)) {
-        // Sjekk om epost finnes
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
-
         if ($stmt->fetch()) {
             $errors[] = "E-post er allerede registrert.";
         } else {
-            // Hash passord
             $hash = password_hash($password, PASSWORD_DEFAULT);
-
             $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
             try {
                 $stmt->execute([$email, $hash]);
