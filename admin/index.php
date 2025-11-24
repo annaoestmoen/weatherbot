@@ -44,6 +44,11 @@ $logs = $stmt->fetchAll();
 </tr>
 <?php endforeach; ?>
 </table>
+<br>
+
+<!-- Link til å laste ned pdf -->
+<a href="download_errors.php" class="button">Last ned feil chats (PDF)</a>
+<br><br>
 
 <!-- Link for å logge ut -->
 <a href="logout.php">Logg ut</a>
