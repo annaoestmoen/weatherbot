@@ -34,14 +34,13 @@ $email = $userData['email'] ?? 'Ukjent bruker';
 
     <!-- Profilboks -->
     <div class="profile-box">
-    <a href="profile.php" class="button">Min profil</a>
-    
+        <a href="profile.php" class="button">Min profil</a>
         <?php if ($favoriteCity): ?>
-        <p>Favorittbyen din: <strong><?= htmlspecialchars($favoriteCity) ?></strong></p>
+            <p id="favoriteCityText">Favorittbyen din: <strong><?= htmlspecialchars($favoriteCity) ?></strong></p>
         <?php else: ?>
-        <p>Du har ikke satt en favorittby ennå. <a href="profile.php">Legg til her</a>.</p>
+            <p>Du har ikke satt en favorittby ennå. <a href="profile.php">Legg til her</a>.</p>
         <?php endif; ?>
-        </div>
+    </div>
 
     <!-- Meldingsvindu -->
     <div id="messages"></div>
