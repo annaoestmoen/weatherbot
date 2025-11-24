@@ -29,7 +29,7 @@ async function sendMessage(message = null, lat = null, lon = null) {
     if (!msg) return;
 
     if (!message) inputBox.value = ''; // tøm tekstfelt hvis bruker skrev selv
-    appendMessage('user', msg);       // vis bruker-melding
+    if (!message) appendMessage('user', msg); // vis bruker-melding kun hvis bruker skrev
 
     try {
         // Bygg POST-data
@@ -62,27 +62,13 @@ inputBox.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') sendMessage();
 });
 
-/**
- * Funksjon for å bruke brukerens posisjon (valgfritt)
- */
-async function sendLocation() {
-    if (!navigator.geolocation) {
-        appendMessage('bot', 'Geolocation is not supported by your browser.');
-        return;
+// --- Automatisk værmelding for favorittby ---
+window.addEventListener('DOMContentLoaded', () => {
+    const chatbox = document.getElementById('chatbox');
+    const favoriteCity = chatbox.dataset.favoriteCity;
+    
+    if (favoriteCity) {
+        // Send favorittbyen som melding til chat.php
+        sendMessage(favoriteCity);
     }
-
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            sendMessage('My location', lat, lon);
-        },
-        (err) => {
-            appendMessage('bot', 'Could not get your location.');
-            console.error(err);
-        }
-    );
-}
-
-// Hvis du vil legge til en knapp for "Bruk min posisjon", kan du koble den slik:
-// document.getElementById('locationBtn').addEventListener('click', sendLocation);
+});
