@@ -1,45 +1,61 @@
 <?php
 session_start();
-// Sjekk at bruker er logget inn
-if (empty($_SESSION['user_logged_in'])) {
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../functions/weather.php';
+require_once __DIR__ . '/../functions/chatfunctions.php';
+
+if (empty($_SESSION['user_logged_in']) || !isset($_SESSION['user_id'])) {
     header('Location: ../index.php?error=not_logged_in');
     exit;
 }
 
-// Hent brukernavn fra session
-$email = $_SESSION['user_email'] ?? 'Ukjent bruker';
+$userId = $_SESSION['user_id'];
+
+// Hent brukerens favorittby
+$stmt = $pdo->prepare("SELECT favorite_city, email FROM users WHERE id = ?");
+$stmt->execute([$userId]);
+$userData = $stmt->fetch();
+$favoriteCity = $userData['favorite_city'] ?? '';
+$email = $userData['email'] ?? 'Ukjent bruker';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Weatherbot</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+<meta charset="UTF-8">
+<title>Weatherbot</title>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <div id="chatbox">
-        <h2>Weatherbot</h2>
+<div id="chatbox" data-favorite-city="<?= htmlspecialchars($favoriteCity) ?>">
+    <h2>Weatherbot</h2>
 
-        <h3>Hei <?= htmlspecialchars($email) ?>!</h3>
+    <h3>Hei <?= htmlspecialchars($email) ?>!</h3>
 
-        <!-- Meldingsvindu -->
-        <div id="messages"></div>
+    <!-- Profilboks -->
+    <div class="profile-box">
+    <a href="profile.php" class="button">Min profil</a>
+    
+        <?php if ($favoriteCity): ?>
+        <p>Favorittbyen din: <strong><?= htmlspecialchars($favoriteCity) ?></strong></p>
+        <?php else: ?>
+        <p>Du har ikke satt en favorittby ennå. <a href="profile.php">Legg til her</a>.</p>
+        <?php endif; ?>
+        </div>
 
-        <!-- Tekstfelt for brukerinput -->
-        <input type="text" id="inputBox" placeholder="Ask about the weather in any city!" />
+    <!-- Meldingsvindu -->
+    <div id="messages"></div>
 
-        <!-- Send-knapp -->
-        <button id="sendBtn">Send</button>
+    <!-- Tekstfelt for brukerinput -->
+    <input type="text" id="inputBox" placeholder="Ask about the weather in any city!" />
 
-        <!-- Logg ut-knapp -->
-        <a href="logout.php">Logg ut</a>
-    </div>
+    <!-- Send-knapp -->
+    <button id="sendBtn">Send</button>
 
-    <!-- Link til JavaScript -->
-    <script src="../assets/js/chat.js"></script>
+    <!-- Logg ut-knapp -->
+    <a href="logout.php" class="button">Logg ut</a>
+</div>
+
+<script src="../assets/js/chat.js"></script>
 </body>
 </html>
-
-
-
