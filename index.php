@@ -1,5 +1,7 @@
 <?php
 require_once 'functions/auth.php'; // Henter login-funksjoner
+require_once 'functions/validation.php';
+
 $error = '';
 
 // Sjekk om vi har en utloggingsmelding
@@ -17,22 +19,30 @@ if (isset($_GET['message'])) {
 
 // Behandle login-skjema
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $password = $_POST['password'];
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
     $is_admin = isset($_POST['admin']);
 
-    $result = login($email, $password, $is_admin);
+    // -------------------
+    // SANITISERING & VALIDERING
+    // -------------------
+    $email = sanitizeString($email);
+    $password = sanitizeString($password);
 
-    if ($result === true) {
-        // Videresend til riktig dashboard
-        if ($is_admin) {
-            header('Location: admin/index.php');
-        } else {
-            header('Location: user/index.php');
-        }
-        exit;
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Ugyldig e-postadresse.";
+    } elseif (strlen($password) < 6) { // enkel passord-sjekk
+        $error = "Passord må være minst 6 tegn.";
     } else {
-        $error = $result; // Sett feilmelding
+        $result = login($email, $password, $is_admin);
+
+        if ($result === true) {
+            // Videresend til riktig dashboard
+            header('Location: ' . ($is_admin ? 'admin/index.php' : 'user/index.php'));
+            exit;
+        } else {
+            $error = $result; // Sett feilmelding fra login-funksjonen
+        }
     }
 }
 ?>
@@ -49,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="post">
         <label>E-post</label><br>
-        <input type="email" name="email" required><br>
+        <input type="email" name="email" required value="<?= htmlspecialchars($email ?? '') ?>"><br>
 
         <label>Passord</label><br>
         <input type="password" name="password" required><br>
