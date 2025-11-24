@@ -50,6 +50,10 @@ $logs = $stmt->fetchAll();
 <a href="download_errors.php" class="button">Last ned feil chats (PDF)</a>
 <br><br>
 
+<!-- Link til brukeroversikt -->
+<a href="users_overview.php" class="button">Se alle brukere</a>
+<br><br>
+
 <!-- Link for å logge ut -->
 <a href="logout.php">Logg ut</a>
 </body>
