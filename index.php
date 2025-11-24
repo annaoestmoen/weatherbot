@@ -17,11 +17,11 @@ if (isset($_GET['message'])) {
 
 // Behandle login-skjema
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $password = $_POST['password'];
-    $is_admin = isset($_POST['admin']); // checkbox eller knapp for admin
+    $is_admin = isset($_POST['admin']);
 
-    $result = login($username, $password, $is_admin);
+    $result = login($email, $password, $is_admin);
 
     if ($result === true) {
         // Videresend til riktig dashboard
@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post">
-        <label>Brukernavn</label><br>
-        <input type="text" name="username" required><br>
+        <label>E-post</label><br>
+        <input type="email" name="email" required><br>
 
         <label>Passord</label><br>
         <input type="password" name="password" required><br>
@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="admin">Admin login</label><br><br>
 
         <button type="submit">Logg inn</button>
+
+        <p>Har du ikke bruker? <a href="register.php">Registrer deg her</a></p>
     </form>
 </body>
 </html>
