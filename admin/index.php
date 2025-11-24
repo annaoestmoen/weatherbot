@@ -9,7 +9,7 @@ if (empty($_SESSION['admin_logged_in'])) {
 }
 
 // Hent admin-navn fra session
-$adminName = $_SESSION['admin_username'];
+$adminName = $_SESSION['admin_email'];
 
 // Hent feil-logs fra chat_logs 
 $stmt = $pdo->query("SELECT * FROM chat_logs WHERE is_error = 1 ORDER BY created_at DESC");

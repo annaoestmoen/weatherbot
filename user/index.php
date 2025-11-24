@@ -7,7 +7,7 @@ if (empty($_SESSION['user_logged_in'])) {
 }
 
 // Hent brukernavn fra session
-$username = $_SESSION['user_username'] ?? 'Ukjent bruker';
+$email = $_SESSION['user_email'] ?? 'Ukjent bruker';
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ $username = $_SESSION['user_username'] ?? 'Ukjent bruker';
     <div id="chatbox">
         <h2>Weatherbot</h2>
 
-        <h3>Hei <?= htmlspecialchars($username) ?>!</h3>
+        <h3>Hei <?= htmlspecialchars($email) ?>!</h3>
 
         <!-- Meldingsvindu -->
         <div id="messages"></div>
