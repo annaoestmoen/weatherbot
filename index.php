@@ -54,33 +54,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<body>
-    <h2 style="text-align:left;">Login</h2>
-    <?php if ($error): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
 
-    <!-- Vis utloggingsmelding hvis satt -->
-    <?php if ($logout_message): ?>
-        <p class="success"><?= htmlspecialchars($logout_message) ?></p>
-    <?php endif; ?>
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Weatherbot - Login</title>
+    <link rel="stylesheet" href="/weatherbot/assets/css/style.css">
+</head>
+    <body>
+        <div class="center-text">
+        <h2>Login</h2>
+        
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <!-- Login-skjema -->
-    <form method="post">
-        <label>E-post</label><br>
-        <input type="email" name="email" required value="<?= htmlspecialchars($email ?? '') ?>"><br>
+        <!-- Vis utloggingsmelding hvis satt -->
+        <?php if ($logout_message): ?>
+            <p class="success"><?= htmlspecialchars($logout_message) ?></p>
+        <?php endif; ?>
 
-        <label>Passord</label><br>
-        <input type="password" name="password" required><br>
+        <!-- Login-skjema -->
+        <form method="post">
+            <label>E-post</label><br>
+            <input type="email" name="email" required value="<?= htmlspecialchars($email ?? '') ?>"><br>
 
-        <!-- Admin checkbox -->
-        <input type="checkbox" name="admin" id="admin">
-        <label for="admin">Admin login</label><br><br>
+            <label>Passord</label><br>
+            <input type="password" name="password" required><br>
 
-        <button type="submit">Logg inn</button>
+            <!-- Admin checkbox -->
+            <input type="checkbox" name="admin" id="admin">
+            <label for="admin">Admin login</label><br><br>
 
-        <!-- Link til registrering -->
-        <p>Har du ikke bruker? <a href="register.php">Registrer deg her</a></p>
-    </form>
-</body>
+            <button type="submit">Logg inn</button>
+
+            <!-- Link til registrering -->
+            <p>Har du ikke bruker? <a href="register.php">Registrer deg her</a></p>
+        </form>
+    </body>
 </html>

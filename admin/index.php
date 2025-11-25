@@ -28,7 +28,7 @@ $logs = $stmt->fetchAll();
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="/weatherbot/assets/css/style.css">
 </head>
 <body>
 
@@ -65,4 +65,3 @@ $logs = $stmt->fetchAll();
 <a href="logout.php">Logg ut</a>
 </body>
 </html>
-
