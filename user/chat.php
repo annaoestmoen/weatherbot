@@ -1,4 +1,11 @@
 <?php
+/**
+ * Endpoint for å håndtere chat med Weatherbot.
+ * Henter værdata, gir klær-anbefalinger og returnerer JSON-respons.
+ *
+ * @package Weatherbot
+ */
+
 header('Content-Type: application/json');
 session_start();
 
@@ -28,7 +35,7 @@ if ($userMessage === '' && $favoriteCity) {
     $userMessage = $favoriteCity;
 }
 
-// Validering
+// Valider og sanitisér melding
 if (!validateChatMessage($userMessage)) {
     echo json_encode(['reply' => "Ugyldig melding. Vennligst skriv vanlig tekst uten HTML eller spesialtegn."]);
     exit;
@@ -36,7 +43,7 @@ if (!validateChatMessage($userMessage)) {
 
 $userMessage = sanitizeString($userMessage);
 
-// --- Hent vær ---
+// Hent geokoordinater fra Open-Meteo geocoding API
 $cityName = $userMessage;
 $geoApiUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' . urlencode($cityName) . '&count=1';
 $ch = curl_init();
@@ -57,6 +64,7 @@ if (!isset($geoData['results'][0])) {
     exit;
 }
 
+// Hent værdata
 $lat = $geoData['results'][0]['latitude'];
 $lon = $geoData['results'][0]['longitude'];
 $resolvedCity = $geoData['results'][0]['name'];
@@ -68,6 +76,7 @@ if (!$weatherData) {
     exit;
 }
 
+// Generer svar med temperatur, klær-anbefaling og emoji
 $temp = $weatherData['temperature'];
 $weatherCode = $weatherData['weathercode'];
 $windSpeed = $weatherData['windspeed'];
@@ -84,7 +93,9 @@ $reply .= "<strong>{$resolvedCity}</strong><br>";
 if (!empty($desc)) $reply .= ucfirst($desc) . "<br>";
 $reply .= "{$advice}</div>";
 
+// Logg chat, merk feil hvis nødvendig
 $is_error = (strpos(strtolower($reply), "couldn't") !== false) ? 1 : 0;
 logChat($userMessage, $reply, $is_error);
 
+// Returner JSON-svar
 echo json_encode(['reply' => $reply]);

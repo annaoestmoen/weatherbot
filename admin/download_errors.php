@@ -1,4 +1,11 @@
 <?php
+/**
+ * Eksporterer alle feil chats til PDF.
+ * Krever at brukeren er administrator.
+ *
+ * @package ChatLogs
+ */
+
 session_start();
 require_once __DIR__ . '/../functions/auth.php';
 requireAdmin(); // sjekk at admin er logget inn
@@ -6,7 +13,7 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
-    // Hent alle feil chats
+    // Hent alle chat-logger med feil, nyeste først
     $stmt = $pdo->prepare("SELECT * FROM chat_logs WHERE is_error = 1 ORDER BY created_at DESC");
     $stmt->execute();
     $logs = $stmt->fetchAll();
@@ -24,6 +31,7 @@ try {
 
     $pdf->SetFont('Arial','',12);
 
+    // Legg til hver logg i PDF
     foreach ($logs as $log) {
         $pdf->MultiCell(0, 6, "Tid: " . $log['created_at']);
         $pdf->MultiCell(0, 6, "Bruker: " . $log['user_message']);
@@ -31,7 +39,7 @@ try {
         $pdf->Ln(5);
     }
 
-    // Send PDF til nettleser
+    // Send PDF til nettleser for nedlasting
     $pdf->Output('D', 'feil_chats.pdf');
 
 } catch (PDOException $e) {

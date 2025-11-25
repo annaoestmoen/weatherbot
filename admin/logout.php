@@ -1,11 +1,16 @@
 <?php
+/**
+ * Logger ut admin-bruker.
+ *
+ * @package AdminPanel
+ */
+
 session_start();
 require_once '../functions/auth.php';
 
-// Logg ut admin
-logout(true); // true = admin
+// Logg ut admin (true = admin)
+logout(true);
 
-// Send tilbake til admin-innloggingssiden eller index med beskjed
+// Redirect til innloggingsside med melding
 header('Location: ../index.php?message=logged_out_admin');
 exit;
-

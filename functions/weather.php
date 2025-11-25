@@ -1,7 +1,12 @@
 <?php
+/**
+ * Funksjoner for å hente værdata og gi vær- og klær-anbefalinger.
+ *
+ * @package Weather
+ */
 
 /**
- * Hent værdata fra Open-Meteo API for gitt latitude og longitude
+ * Hent værdata fra Open-Meteo API for gitt latitude og longitude.
  *
  * @param float $lat Latitude
  * @param float $lon Longitude
@@ -27,7 +32,7 @@ function getWeather($lat, $lon) {
 }
 
 /**
- * Gi anbefaling om klær basert på temperatur, værkode og vind
+ * Gi anbefaling om klær basert på temperatur, værkode og vind.
  *
  * @param float $temp Temperatur i °C
  * @param int|null $code Open-Meteo værkode (valgfritt)
@@ -80,7 +85,7 @@ function getClothingAdvice($temp, $code = null, $windSpeed = 0) {
 }
 
 /**
- * Konverter Open-Meteo værkode til emoji og kort tekst
+ * Konverter Open-Meteo værkode til emoji og kort tekst.
  *
  * @param int $code Værkode
  * @param float $windSpeed Vindhastighet
@@ -90,6 +95,7 @@ function getWeatherEmoji($code, $windSpeed) {
     $emoji = '';
     $text = '';
 
+    // Map værkode til emoji og tekst
     switch($code) {
         case 0:
         case 1:

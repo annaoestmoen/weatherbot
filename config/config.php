@@ -1,8 +1,9 @@
 <?php
 /**
- * Konfigurasjonsfil for Weatherbot
- * 
+ * Konfigurasjonsfil for Weatherbot.
  * Inneholder standardverdier og API-endepunkter.
+ *
+ * @package Config
  */
 
 return [

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Registreringsside for nye brukere.
+ *
+ * Håndterer inputvalidering, passordhashing og lagring av ny bruker i databasen.
+ * Viser feilmeldinger hvis input er ugyldig eller e-post allerede finnes.
+ *
+ * @package UserManagement
+ */
+
 require_once __DIR__ . '/config/db.php';
 require_once 'functions/validation.php';
 session_start();
@@ -6,31 +15,37 @@ session_start();
 $errors = [];
 $success = "";
 
+// Behandle skjema ved POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $password2 = $_POST['password2'] ?? '';
 
-    // Validering og sanitizing
+    // Valider e-post
     $email = validateEmail($email);
     if (!$email) $errors[] = "Ugyldig e-postadresse.";
 
+    // Sjekk passordmatch
     if ($password !== $password2) {
         $errors[] = "Passordene matcher ikke.";
     } else {
+        // Valider passordlengde
         $password = validatePassword($password);
         if (!$password) $errors[] = "Passord må være minst 8 tegn.";
     }
 
-    // Fortsett hvis OK
+    // Fortsett hvis ingen feil
     if (empty($errors)) {
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
+
+        // Sjekk om e-post allerede finnes
         if ($stmt->fetch()) {
             $errors[] = "E-post er allerede registrert.";
         } else {
-            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $hash = password_hash($password, PASSWORD_DEFAULT); // Hash passord
             $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
+
             try {
                 $stmt->execute([$email, $hash]);
                 $success = "Bruker registrert. Du kan nå logge inn.";
@@ -42,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="no">
 <head>
@@ -51,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h2>Registrer ny bruker</h2>
 
+    <!-- Vis eventuelle feilmeldinger -->
     <?php if (!empty($errors)): ?>
         <div style="color:red;">
             <ul>
@@ -61,11 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
+    <!-- Vis suksessmelding -->
     <?php if ($success): ?>
         <div style="color:green;"><?= htmlspecialchars($success) ?></div>
         <p><a href="index.php">Gå til innlogging</a></p>
     <?php else: ?>
 
+    <!-- Registreringsskjema -->
     <form method="post" action="">
         <label>E-post</label><br>
         <input type="email" name="email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>"><br><br>
