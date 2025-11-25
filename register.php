@@ -62,44 +62,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="no">
 <head>
 <meta charset="utf-8">
-<title>Registrer - Mitt prosjekt</title>
+<title>Registrer</title>
+<link rel="stylesheet" href="/weatherbot/assets/css/style.css">
 </head>
-<body>
-    <h2>Registrer ny bruker</h2>
+    <body>
+        <div class="register-container">
+        <h2>Registrer ny bruker</h2>
 
-    <!-- Vis eventuelle feilmeldinger -->
-    <?php if (!empty($errors)): ?>
-        <div style="color:red;">
-            <ul>
-            <?php foreach ($errors as $err): ?>
-                <li><?= htmlspecialchars($err) ?></li>
-            <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
+        <!-- Vis eventuelle feilmeldinger -->
+        <?php if (!empty($errors)): ?>
+            <div style="color:red;">
+                <ul>
+                <?php foreach ($errors as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-    <!-- Vis suksessmelding -->
-    <?php if ($success): ?>
-        <div style="color:green;"><?= htmlspecialchars($success) ?></div>
-        <p><a href="index.php">Gå til innlogging</a></p>
-    <?php else: ?>
+        <!-- Vis suksessmelding -->
+        <?php if ($success): ?>
+            <div style="color:green;"><?= htmlspecialchars($success) ?></div>
+            <p><a href="index.php">Gå til innlogging</a></p>
+        <?php else: ?>
 
-    <!-- Registreringsskjema -->
-    <form method="post" action="">
-        <label>E-post</label><br>
-        <input type="email" name="email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>"><br><br>
+        <!-- Registreringsskjema -->
+        <form method="post" action="">
+            <label>E-post</label><br>
+            <input type="email" name="email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>"><br><br>
 
-        <label>Passord</label><br>
-        <input type="password" name="password" required><br><br>
+            <label>Passord</label><br>
+            <input type="password" name="password" required><br><br>
 
-        <label>Gjenta passord</label><br>
-        <input type="password" name="password2" required><br><br>
+            <label>Gjenta passord</label><br>
+            <input type="password" name="password2" required><br><br>
 
-        <button type="submit">Registrer</button>
-    </form>
+            <button type="submit">Registrer</button>
+        </form>
 
-    <?php endif; ?>
+        <?php endif; ?>
 
-    <p><a href="index.php">Tilbake til innlogging</a></p>
-</body>
+        <p><a href="index.php">Tilbake til innlogging</a></p>
+    </body>
 </html>
