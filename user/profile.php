@@ -1,4 +1,12 @@
 <?php
+/**
+ * Profilside for å endre brukerens favorittby.
+ *
+ * Sjekker at bruker er logget inn, viser eksisterende favorittby, og lar brukeren oppdatere den.
+ *
+ * @package Weatherbot
+ */
+
 session_start();
 require_once __DIR__ . '/../config/db.php';
 
@@ -12,13 +20,13 @@ $userId = $_SESSION['user_id'];
 $error = '';
 $success = '';
 
-// Hent eksisterende favorittby
+// Hent eksisterende favorittby fra databasen
 $stmt = $pdo->prepare("SELECT favorite_city FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $userData = $stmt->fetch();
 $currentFavorite = $userData['favorite_city'] ?? '';
 
-// Behandle skjema
+// Behandle skjema ved POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newCity = trim($_POST['favorite_city'] ?? '');
     
@@ -30,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Rens input
         $newCity = htmlspecialchars($newCity, ENT_QUOTES, 'UTF-8');
 
-        // Oppdater i databasen
+        // Oppdater favorittby i databasen
         $stmt = $pdo->prepare("UPDATE users SET favorite_city = ? WHERE id = ?");
         if ($stmt->execute([$newCity, $userId])) {
             $success = "Favorittbyen ble oppdatert!";
@@ -53,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="profile-container">
         <h2>Rediger favorittby</h2>
 
+        <!-- Vis feilmeldinger eller suksessmelding -->
         <?php if ($error): ?>
             <p class="error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
@@ -60,12 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p class="success"><?= htmlspecialchars($success) ?></p>
         <?php endif; ?>
 
+        <!-- Skjema for å endre favorittby -->
         <form method="post">
             <label for="favorite_city">Favorittby:</label><br>
             <input type="text" name="favorite_city" id="favorite_city" value="<?= htmlspecialchars($currentFavorite) ?>" required><br><br>
             <button type="submit">Lagre</button>
         </form>
 
+        <!-- Navigasjon tilbake til chat -->
         <br>
         <a href="index.php">← Tilbake til chatten</a>
     </div>

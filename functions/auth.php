@@ -5,10 +5,11 @@ require_once __DIR__ . '/../config/db.php';
 
 /**
  * Forsøk å logge inn bruker eller admin.
- * @param string $email
- * @param string $password
- * @param bool $is_admin
- * @return true|string True ved suksess, feilmelding ellers.
+ *
+ * @param string $email E-post til bruker/admin
+ * @param string $password Klartekstpassord
+ * @param bool $is_admin True hvis admin, ellers bruker
+ * @return true|string True ved suksess, feilmelding ved feil
  */
 function login($email, $password, $is_admin = false) {
     global $pdo;
@@ -24,13 +25,13 @@ function login($email, $password, $is_admin = false) {
         return "Feil e-post eller passord.";
     }
 
-    // Sjekk lås
+    // Sjekk om kontoen er låst
     if (!empty($user['lock_until']) && strtotime($user['lock_until']) > time()) {
         $remaining = ceil((strtotime($user['lock_until']) - time()) / 60);
         return "Kontoen er midlertidig låst. Prøv igjen om {$remaining} minutter.";
     }
 
-    // Sjekk passord med password_verify
+    // Sjekk passord
     if (!password_verify($password, $user['password'])) {
         // Øk failed_attempts
         $failed = (int)$user['failed_attempts'] + 1;
@@ -51,7 +52,7 @@ function login($email, $password, $is_admin = false) {
     $stmt = $pdo->prepare("UPDATE {$table} SET failed_attempts = 0, lock_until = NULL WHERE id = ?");
     $stmt->execute([$user['id']]);
 
-    // Sett sessioner
+    // Sett session-variabler
     if ($is_admin) {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_email'] = $user['email'];
@@ -65,6 +66,11 @@ function login($email, $password, $is_admin = false) {
     return true;
 }
 
+/**
+ * Logg ut bruker eller admin.
+ *
+ * @param bool $is_admin True hvis admin, ellers bruker
+ */
 function logout($is_admin = false) {
     if ($is_admin) {
         unset($_SESSION['admin_logged_in'], $_SESSION['admin_email'], $_SESSION['admin_id']);
@@ -73,6 +79,9 @@ function logout($is_admin = false) {
     }
 }
 
+/**
+ * Krever at admin er logget inn. Redirect til innlogging hvis ikke.
+ */
 function requireAdmin() {
     if (empty($_SESSION['admin_logged_in'])) {
         header('Location: ../index.php?error=login');
@@ -80,6 +89,9 @@ function requireAdmin() {
     }
 }
 
+/**
+ * Krever at vanlig bruker er logget inn. Redirect til innlogging hvis ikke.
+ */
 function requireUser() {
     if (empty($_SESSION['user_logged_in'])) {
         header('Location: ../index.php?error=login');

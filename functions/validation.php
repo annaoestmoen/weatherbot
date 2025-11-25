@@ -1,7 +1,19 @@
 <?php
-// ===============================
-// SANITISERING (XSS-beskyttelse)
-// ===============================
+/**
+ * Funksjoner for sanitizing og validering av input.
+ *
+ * @package Validation
+ */
+
+ // ===============================
+ // SANITISERING (XSS-beskyttelse)
+ // ===============================
+/**
+ * Rydder opp input-strenger for å beskytte mot XSS.
+ *
+ * @param string $input
+ * @return string Sanitized streng
+ */
 function sanitizeString(string $input): string {
     $input = trim($input);
     $input = strip_tags($input); 
@@ -9,9 +21,16 @@ function sanitizeString(string $input): string {
     return $input;
 }
 
-// ===============================
-// CHAT-MELDING VALIDERING
-// ===============================
+ // ===============================
+ // CHAT-MELDING VALIDERING
+ // ===============================
+/**
+ * Validerer chatmeldinger.
+ *
+ * @param string $message
+ * @param int $maxLength Maksimal lengde
+ * @return bool True hvis gyldig, false ellers
+ */
 function validateChatMessage(string $message, int $maxLength = 500): bool {
     $sanitized = sanitizeString($message);
 
@@ -23,23 +42,43 @@ function validateChatMessage(string $message, int $maxLength = 500): bool {
 }
 
 // ===============================
-// EPOST VALIDERING
-// ===============================
+ // EPOST VALIDERING
+ // ===============================
+/**
+ * Validerer epostadresse.
+ *
+ * @param string $email
+ * @return bool True hvis gyldig epost
+ */
 function validateEmail(string $email): bool {
     $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-// ===============================
-// PASSORD VALIDERING
-// ===============================
+ // ===============================
+ // PASSORD VALIDERING
+ // ===============================
+/**
+ * Validerer passordlengde.
+ *
+ * @param string $password
+ * @param int $minLength
+ * @return bool True hvis passord er langt nok
+ */
 function validatePassword(string $password, int $minLength = 8): bool {
     return strlen($password) >= $minLength;
 }
 
-// ===============================
-// SANITIZE + VALIDATE LOGIN / REGISTRERING
-// ===============================
+ // ===============================
+ // SANITIZE + VALIDATE LOGIN / REGISTRERING
+ // ===============================
+/**
+ * Sanitizerer og validerer login-input.
+ *
+ * @param string $email
+ * @param string $password
+ * @return array ['success' => bool, 'error' => string|null, 'email' => string, 'password' => string]
+ */
 function sanitizeAndValidateLogin(string $email, string $password): array {
     $email = sanitizeString($email);
     $password = sanitizeString($password);
@@ -55,9 +94,17 @@ function sanitizeAndValidateLogin(string $email, string $password): array {
     return ['success' => true, 'email' => $email, 'password' => $password];
 }
 
-// ===============================
-// SANITIZE + VALIDATE REGISTRERING
-// ===============================
+ // ===============================
+ // SANITIZE + VALIDATE REGISTRERING
+ // ===============================
+/**
+ * Sanitizerer og validerer registreringsinput.
+ *
+ * @param string $email
+ * @param string $password
+ * @param string $password2
+ * @return array ['success' => bool, 'error' => string|null, 'email' => string, 'password' => string]
+ */
 function sanitizeAndValidateRegistration(string $email, string $password, string $password2): array {
     $email = sanitizeString($email);
     $password = sanitizeString($password);

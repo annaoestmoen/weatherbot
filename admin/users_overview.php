@@ -1,10 +1,18 @@
 <?php
+/**
+ * Admin - Brukeroversikt.
+ * Viser alle brukere med mulighet for sletting og tilbakestilling av lås.
+ * Krever at admin er logget inn.
+ *
+ * @package AdminPanel
+ */
+
 session_start();
 require_once '../config/db.php';
 require_once '../functions/auth.php';
 requireAdmin(); // sjekk at admin er logget inn
 
-// Hent alle brukere
+// Hent alle brukere fra databasen
 $stmt = $pdo->query("SELECT * FROM users ORDER BY id ASC");
 $users = $stmt->fetchAll();
 ?>
@@ -18,6 +26,7 @@ $users = $stmt->fetchAll();
 </head>
 <body>
 
+<!-- Vis navnet på innlogget admin -->
 <h2>Hei <?= htmlspecialchars($_SESSION['admin_email']) ?>!</h2>
 <h3>Brukere</h3>
 
@@ -32,6 +41,7 @@ $users = $stmt->fetchAll();
     <th>Åpne bruker</th>
 </tr>
 
+<!-- Tabell med brukere -->
 <?php foreach ($users as $user): ?>
 <tr>
     <td><?= htmlspecialchars($user['id']) ?></td>
@@ -40,7 +50,7 @@ $users = $stmt->fetchAll();
     <td><?= htmlspecialchars($user['failed_attempts']) ?></td>
     <td><?= htmlspecialchars($user['lock_until'] ?? '—') ?></td>
 
-    <!-- Slett knapp i egen celle -->
+    <!-- Slett knapp -->
     <td>
         <form action="delete_user.php" method="POST">
             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
@@ -48,7 +58,7 @@ $users = $stmt->fetchAll();
         </form>
     </td>
 
-    <!-- Nullstill lås i egen celle -->
+    <!-- Nullstill lås -->
     <td>
     <button class="reset-lock-btn" data-user-id="<?= $user['id'] ?>">Nullstill lås</button>
     </td>
@@ -57,6 +67,7 @@ $users = $stmt->fetchAll();
 </table>
 
 <br>
+<!-- Tilbake knapp / Logg ut -->
 <a href="index.php">Tilbake til admin dashboard</a> | 
 <a href="logout.php">Logg ut</a>
 
@@ -64,6 +75,7 @@ $users = $stmt->fetchAll();
 </html>
 
 <script>
+// Håndter tilbakestilling av lås via AJAX
 document.querySelectorAll('.reset-lock-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         const userId = btn.dataset.userId;
@@ -79,12 +91,12 @@ document.querySelectorAll('.reset-lock-btn').forEach(btn => {
                 body: formData
             });
 
-            const result = await response.text(); // vi sender bare tekst/ok fra PHP
+            const result = await response.text(); // PHP sender enkel tekst-respons
 
             // Oppdater tabellen visuelt
             const row = btn.closest('tr');
-            row.querySelector('td:nth-child(5)').textContent = '—';      // Lock Until
-            row.querySelector('td:nth-child(4)').textContent = '0';      // failed_attempts
+            row.querySelector('td:nth-child(5)').textContent = '—'; // Lock Until
+            row.querySelector('td:nth-child(4)').textContent = '0'; // failed_attempts
 
             alert('Låsen er nullstilt!');
         } catch (err) {

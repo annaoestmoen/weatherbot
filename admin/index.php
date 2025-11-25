@@ -1,4 +1,11 @@
 <?php
+/**
+ * Admin Dashboard som viser feil-chats.
+ * Krever at admin er logget inn.
+ *
+ * @package AdminPanel
+ */
+
 session_start();
 require_once '../config/db.php';
 
@@ -11,7 +18,7 @@ if (empty($_SESSION['admin_logged_in'])) {
 // Hent admin-navn fra session
 $adminName = $_SESSION['admin_email'];
 
-// Hent feil-logs fra chat_logs 
+// Hent alle feil-logger fra chat_logs, nyeste først
 $stmt = $pdo->query("SELECT * FROM chat_logs WHERE is_error = 1 ORDER BY created_at DESC");
 $logs = $stmt->fetchAll();
 ?>
@@ -30,7 +37,7 @@ $logs = $stmt->fetchAll();
 
 <h3>Feil-chats</h3>
 
-<!-- Tabell med feil-logger fra databasen -->
+<!-- Tabell med feil-logger -->
 <table border="1">
 <tr><th>ID</th><th>Brukermelding</th><th>Botsvar</th><th>Tid</th></tr>
 

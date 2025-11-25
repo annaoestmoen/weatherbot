@@ -1,9 +1,18 @@
 <?php
+/**
+ * Brukergrensesnitt for Weatherbot-chat.
+ *
+ * Viser innlogget bruker, favorittby, meldingsvindu, og lar brukeren chatte med Weatherbot.
+ *
+ * @package Weatherbot
+ */
+
 session_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../functions/weather.php';
 require_once __DIR__ . '/../functions/chatfunctions.php';
 
+// Sjekk at bruker er logget inn
 if (empty($_SESSION['user_logged_in']) || !isset($_SESSION['user_id'])) {
     header('Location: ../index.php?error=not_logged_in');
     exit;
@@ -11,7 +20,7 @@ if (empty($_SESSION['user_logged_in']) || !isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Hent brukerens favorittby
+// Hent brukerdata (favorittby og epost)
 $stmt = $pdo->prepare("SELECT favorite_city, email FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $userData = $stmt->fetch();
@@ -30,9 +39,10 @@ $email = $userData['email'] ?? 'Ukjent bruker';
 <div id="chatbox" data-favorite-city="<?= htmlspecialchars($favoriteCity) ?>">
     <h2>Weatherbot</h2>
 
+    <!-- Vis innlogget bruker -->
     <h3>Hei <?= htmlspecialchars($email) ?>!</h3>
 
-    <!-- Profilboks -->
+    <!-- Profilboks med favorittby -->
     <div class="profile-box">
         <a href="profile.php" class="button">Min profil</a>
         <?php if ($favoriteCity): ?>
@@ -42,16 +52,14 @@ $email = $userData['email'] ?? 'Ukjent bruker';
         <?php endif; ?>
     </div>
 
-    <!-- Meldingsvindu -->
+    <!-- Chat-meldinger vises her -->
     <div id="messages"></div>
 
-    <!-- Tekstfelt for brukerinput -->
+    <!-- Brukerinput -->
     <input type="text" id="inputBox" placeholder="Ask about the weather in any city!" />
-
-    <!-- Send-knapp -->
     <button id="sendBtn">Send</button>
 
-    <!-- Logg ut-knapp -->
+    <!-- Logg ut -->
     <a href="logout.php" class="button">Logg ut</a>
 </div>
 
